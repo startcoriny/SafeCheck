@@ -57,6 +57,16 @@ export interface NewsFilter {
   limit: number;
 }
 
+export interface RawNewsItem {
+  articleKey: string;
+  pressCode: string;
+  articleId: string;
+  title: string;
+  url: string;
+  publisher: string;
+  publishedAt: Date;
+}
+
 export interface PaginatedResult<T> {
   items: T[];
   total: number;
