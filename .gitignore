@@ -1,0 +1,36 @@
+# 의존성
+node_modules/
+dist/
+
+# 환경변수 (실제 값이 담긴 파일은 git에서 제외)
+.env
+.env.development
+.env.production
+.env.staging
+
+# 로그
+logs/
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 테스트 커버리지
+coverage/
+
+# 빌드 캐시
+.tsbuildinfo
+
+# Claude Code 로컬 설정
+.claude/
