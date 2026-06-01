@@ -344,7 +344,29 @@ ADR에는 다음 항목을 포함합니다.
 
 실행할 수 없는 환경이라면 실행하지 못한 이유를 명확히 기록합니다.
 
-## 12. Git Commit Message Rules
+## 12. Branch Naming Rules
+
+브랜치 이름에 Phase 번호, 내부 계획 순서 등을 포함하지 않습니다.
+
+좋은 예.
+
+```
+feat/news
+feat/shelter
+fix/news-dedup
+```
+
+나쁜 예.
+
+```
+feat/phase-2-news
+feat/phase-1-harness
+feat/step3-shelter
+```
+
+이유: 브랜치 이름은 기능을 설명해야 합니다. 내부 계획 번호는 외부에서 의미를 알 수 없고 계획이 바뀌면 이름이 틀려집니다.
+
+## 13. Git Commit Message Rules
 
 커밋 메시지는 아래 형식을 사용합니다.
 
