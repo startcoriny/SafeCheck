@@ -185,7 +185,7 @@ MVP의 첫 번째 목표는 실시간 뉴스 정보 페이지입니다.
 
 - Backend. NestJS.
 - Language. TypeScript.
-- Database. MySQL.
+- Database. PostgreSQL.
 - Architecture. Feature-first Modular Monolith.
 - ORM. 아직 확정 전이며, 확정 전에는 TypeORM과 Prisma를 비교한 뒤 제안합니다.
 - API 문서화. Swagger 사용을 기본값으로 고려합니다.
@@ -297,7 +297,7 @@ ADR에는 다음 항목을 포함합니다.
 - 구조는 Feature-first Modular Monolith.
 - 기능 코드는 `src/modules` 아래에 생성.
 - 공통 코드는 `src/common` 또는 `src/shared`에 생성.
-- DB는 MySQL 기준.
+- DB는 PostgreSQL 기준.
 - TypeScript strict 기준을 유지.
 - 과한 추상화보다 읽기 쉬운 구현 우선.
 - MVP에 없는 기능은 구현하지 않고 TODO로 기록.
@@ -406,6 +406,10 @@ PR 생성 전 아래 항목을 확인합니다.
 - Work Log 작성.
 - 관련 ADR 연결.
 
+PR 초안은 사용자에게 먼저 보여주고 승인을 받은 뒤 생성합니다.
+
+승인 없이 직접 생성하지 않습니다.
+
 금지 사항은 다음과 같습니다.
 
 - 테스트 없이 PR 생성.
@@ -435,6 +439,10 @@ Work Log에는 아래 항목을 포함합니다.
 - 테스트 결과.
 - 결과.
 - 남은 TODO.
+
+Work Log 내용은 사용자에게 먼저 보여주고 승인을 받은 뒤 Notion에 등록합니다.
+
+승인 없이 직접 등록하지 않습니다.
 
 ## 15. SafeCheck 기술 판단 기준
 

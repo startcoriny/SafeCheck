@@ -1,4 +1,5 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+// 뉴스 REST API 컨트롤러
+import { Controller, Get, Param, Query, ParseIntPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { NewsService } from './news.service';
 import { NewsQueryDto } from './dto/news-query.dto';
@@ -9,7 +10,7 @@ import { NewsListResponseDto, NewsResponseDto } from './dto/news-response.dto';
 export class NewsController {
   constructor(private readonly newsService: NewsService) {}
 
-  // TODO: Phase 2 구현 — docs/features/news.md 참조
+  // TODO: Phase 2 구현 — docs/domain/news/feature-definition.md 참조
   @ApiOperation({ summary: '뉴스 목록 조회 (페이지네이션, 필터)' })
   @ApiResponse({ status: 200, type: NewsListResponseDto })
   @Get()
@@ -21,7 +22,7 @@ export class NewsController {
   @ApiResponse({ status: 200, type: NewsResponseDto })
   @ApiResponse({ status: 404, description: '뉴스를 찾을 수 없음' })
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<NewsResponseDto> {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<NewsResponseDto> {
     return this.newsService.findById(id);
   }
 }
