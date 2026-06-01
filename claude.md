@@ -185,7 +185,7 @@ MVP의 첫 번째 목표는 실시간 뉴스 정보 페이지입니다.
 
 - Backend. NestJS.
 - Language. TypeScript.
-- Database. MySQL.
+- Database. PostgreSQL.
 - Architecture. Feature-first Modular Monolith.
 - ORM. 아직 확정 전이며, 확정 전에는 TypeORM과 Prisma를 비교한 뒤 제안합니다.
 - API 문서화. Swagger 사용을 기본값으로 고려합니다.
@@ -297,7 +297,7 @@ ADR에는 다음 항목을 포함합니다.
 - 구조는 Feature-first Modular Monolith.
 - 기능 코드는 `src/modules` 아래에 생성.
 - 공통 코드는 `src/common` 또는 `src/shared`에 생성.
-- DB는 MySQL 기준.
+- DB는 PostgreSQL 기준.
 - TypeScript strict 기준을 유지.
 - 과한 추상화보다 읽기 쉬운 구현 우선.
 - MVP에 없는 기능은 구현하지 않고 TODO로 기록.
