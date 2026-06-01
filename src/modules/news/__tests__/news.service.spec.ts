@@ -1,3 +1,4 @@
+// NewsService 단위 테스트
 import { Test, TestingModule } from '@nestjs/testing';
 import { NewsService } from '../news.service';
 import { NewsRepository } from '../news.repository';
@@ -14,7 +15,7 @@ describe('NewsService', () => {
           useValue: {
             findAll: jest.fn(),
             findById: jest.fn(),
-            findByUrl: jest.fn(),
+            findByArticleKey: jest.fn(),
             save: jest.fn(),
           },
         },
@@ -32,4 +33,5 @@ describe('NewsService', () => {
   // describe('findAll', () => { ... });
   // describe('findById', () => { ... });
   // describe('collectAndSave', () => { ... });
+  // describe('assignRiskLevel', () => { ... });
 });

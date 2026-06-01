@@ -7,12 +7,10 @@ info:
 servers:
   - url: http://localhost:3000/api/v1
     description: 로컬 개발 서버
-  - url: https://api.safecheck.kr/api/v1
-    description: 프로덕션 서버 (예정)
 
 tags:
   - name: news
-    description: 실시간 뉴스 정보 (Phase 2)
+    description: 실시간 사건사고 뉴스 (Phase 2)
   - name: shelter
     description: 대피소 위치 (Phase 3)
   - name: disaster
@@ -23,32 +21,58 @@ tags:
     description: 인증·인가 (Phase 5)
 
 paths:
-  # ─── Phase 2: News ─────────────────────────────────────────────────────────
   /news:
     get:
       tags: [news]
       summary: 뉴스 목록 조회
+      description: |
+        필터링을 통과한 사건사고 뉴스 목록을 최신순으로 반환한다.
+        is_filtered=true 인 기사만 노출한다.
       parameters:
         - name: page
           in: query
-          schema: { type: integer, default: 1 }
+          schema: { type: integer, default: 1, minimum: 1 }
+          description: 페이지 번호
         - name: limit
           in: query
           schema: { type: integer, default: 20, maximum: 50 }
+          description: 페이지 크기
         - name: region
           in: query
           schema: { type: string }
-          description: 지역 필터 (예: 서울, 부산)
+          description: 시/도 필터 (예: 서울, 부산)
+        - name: district
+          in: query
+          schema: { type: string }
+          description: 시/군/구 필터 (예: 강남구, 해운대구)
         - name: riskLevel
           in: query
           schema:
             type: string
             enum: [LOW, MEDIUM, HIGH, CRITICAL]
-        - name: category
+          description: 위험도 필터
+        - name: accidentType
           in: query
           schema:
             type: string
-            enum: [DISASTER, ACCIDENT, CRIME, WEATHER, OTHER]
+            enum:
+              - FIRE
+              - EXPLOSION
+              - COLLISION
+              - COLLAPSE
+              - KNIFE_ATTACK
+              - GAS_LEAK
+              - FLOOD
+              - LANDSLIDE
+              - EARTHQUAKE
+              - HAZARDOUS_MATERIAL
+              - PUBLIC_SAFETY
+              - ETC
+          description: 사고 유형 필터
+        - name: keyword
+          in: query
+          schema: { type: string }
+          description: 키워드 검색 (기사 제목 기준)
       responses:
         '200':
           description: 성공
@@ -56,6 +80,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponseNewsList'
+              example:
+                success: true
+                data:
+                  items:
+                    - id: 1
+                      title: 강남역 인근 흉기난동…2명 사망
+                      url: https://n.news.naver.com/article/003/0013976068
+                      publisher: 뉴시스
+                      publishedAt: "2026-05-29T15:31:00+09:00"
+                      collectedAt: "2026-05-29T15:35:00+09:00"
+                      accidentType: KNIFE_ATTACK
+                      riskLevel: CRITICAL
+                      riskScore: 15
+                      region: 서울
+                      district: 강남구
+                  total: 42
+                  page: 1
+                  limit: 20
+                timestamp: "2026-05-29T15:36:00+09:00"
 
   /news/{id}:
     get:
@@ -65,7 +108,8 @@ paths:
         - name: id
           in: path
           required: true
-          schema: { type: string, format: uuid }
+          schema: { type: integer }
+          description: 뉴스 ID
       responses:
         '200':
           description: 성공
@@ -80,12 +124,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  # ─── Phase 3: Shelter (설계 예정) ──────────────────────────────────────────
   /shelters:
     get:
       tags: [shelter]
-      summary: 대피소 목록 조회 (좌표 기반 반경 검색)
-      description: Phase 3 구현 예정
+      summary: 대피소 목록 조회 (Phase 3 구현 예정)
       parameters:
         - name: lat
           in: query
@@ -101,75 +143,112 @@ paths:
           description: 검색 반경 (km)
       responses:
         '200':
-          description: 성공 (Phase 3 구현 후 스키마 확정)
+          description: Phase 3 구현 후 스키마 확정
 
-  # ─── Phase 4: Disaster Alert (설계 예정) ────────────────────────────────────
   /disaster-alerts:
     get:
       tags: [disaster]
-      summary: 재난 알림 목록
-      description: Phase 4 구현 예정
+      summary: 재난 알림 목록 (Phase 4 구현 예정)
       responses:
         '200':
-          description: 성공 (Phase 4 구현 후 스키마 확정)
+          description: Phase 4 구현 후 스키마 확정
 
   /disaster-alerts/active:
     get:
       tags: [disaster]
-      summary: 현재 발효 중인 재난 알림
-      description: Phase 4 구현 예정
+      summary: 현재 발효 중인 재난 알림 (Phase 4 구현 예정)
       responses:
         '200':
-          description: 성공 (Phase 4 구현 후 스키마 확정)
+          description: Phase 4 구현 후 스키마 확정
 
-  # ─── Phase 5: Auth (설계 예정) ──────────────────────────────────────────────
   /auth/register:
     post:
       tags: [auth]
-      summary: 회원가입
-      description: Phase 5 구현 예정
+      summary: 회원가입 (Phase 5 구현 예정)
       responses:
         '201':
-          description: 가입 성공
+          description: Phase 5 구현 후 스키마 확정
 
   /auth/login:
     post:
       tags: [auth]
-      summary: 로그인
-      description: Phase 5 구현 예정
+      summary: 로그인 (Phase 5 구현 예정)
       responses:
         '200':
-          description: 로그인 성공 (access_token, refresh_token 반환)
+          description: Phase 5 구현 후 스키마 확정
 
-  # ─── Phase 5: Rescue (설계 예정) ────────────────────────────────────────────
   /rescue:
     post:
       tags: [rescue]
-      summary: 구조 요청 생성 (비회원 가능)
-      description: Phase 5 구현 예정
+      summary: 구조 요청 생성 (Phase 5 구현 예정)
       responses:
         '201':
-          description: 요청 생성 성공
+          description: Phase 5 구현 후 스키마 확정
 
 components:
   schemas:
     NewsItem:
       type: object
+      required:
+        - id
+        - title
+        - url
+        - publisher
+        - publishedAt
+        - collectedAt
+        - accidentType
+        - riskLevel
+        - riskScore
       properties:
-        id: { type: string, format: uuid }
-        title: { type: string }
-        content: { type: string }
-        source: { type: string }
-        url: { type: string }
-        publishedAt: { type: string, format: date-time }
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: 강남역 인근 흉기난동…2명 사망
+        url:
+          type: string
+          example: https://n.news.naver.com/article/003/0013976068
+        publisher:
+          type: string
+          example: 뉴시스
+        publishedAt:
+          type: string
+          format: date-time
+        collectedAt:
+          type: string
+          format: date-time
+        accidentType:
+          type: string
+          enum:
+            - FIRE
+            - EXPLOSION
+            - COLLISION
+            - COLLAPSE
+            - KNIFE_ATTACK
+            - GAS_LEAK
+            - FLOOD
+            - LANDSLIDE
+            - EARTHQUAKE
+            - HAZARDOUS_MATERIAL
+            - PUBLIC_SAFETY
+            - ETC
+          example: KNIFE_ATTACK
         riskLevel:
           type: string
           enum: [LOW, MEDIUM, HIGH, CRITICAL]
-        category:
+          example: CRITICAL
+        riskScore:
+          type: integer
+          example: 15
+        region:
           type: string
-          enum: [DISASTER, ACCIDENT, CRIME, WEATHER, OTHER]
-        region: { type: string }
-        createdAt: { type: string, format: date-time }
+          nullable: true
+          example: 서울
+        district:
+          type: string
+          nullable: true
+          example: 강남구
 
     NewsList:
       type: object
@@ -178,34 +257,55 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NewsItem'
-        total: { type: integer }
-        page: { type: integer }
-        limit: { type: integer }
+        total:
+          type: integer
+          example: 42
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
 
     ApiResponseNewsItem:
       type: object
       properties:
-        success: { type: boolean, example: true }
+        success:
+          type: boolean
+          example: true
         data:
           $ref: '#/components/schemas/NewsItem'
-        timestamp: { type: string, format: date-time }
+        timestamp:
+          type: string
+          format: date-time
 
     ApiResponseNewsList:
       type: object
       properties:
-        success: { type: boolean, example: true }
+        success:
+          type: boolean
+          example: true
         data:
           $ref: '#/components/schemas/NewsList'
-        timestamp: { type: string, format: date-time }
+        timestamp:
+          type: string
+          format: date-time
 
     ErrorResponse:
       type: object
       properties:
-        success: { type: boolean, example: false }
-        statusCode: { type: integer }
-        message: { type: string }
-        timestamp: { type: string, format: date-time }
-        path: { type: string }
+        success:
+          type: boolean
+          example: false
+        statusCode:
+          type: integer
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        path:
+          type: string
 
   securitySchemes:
     bearerAuth:

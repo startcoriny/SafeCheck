@@ -1,7 +1,8 @@
+// 뉴스 목록 조회 요청 파라미터 DTO
 import { IsOptional, IsString, IsEnum, IsInt, Min, Max } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { RiskLevel, NewsCategory } from '../interfaces/news.types';
+import { RiskLevel, AccidentType } from '../interfaces/news.types';
 
 export class NewsQueryDto {
   @ApiPropertyOptional({ description: '페이지 번호', default: 1 })
@@ -19,18 +20,28 @@ export class NewsQueryDto {
   @Max(50)
   limit?: number = 20;
 
-  @ApiPropertyOptional({ description: '지역 필터 (예: 서울, 부산)' })
+  @ApiPropertyOptional({ description: '시/도 필터 (예: 서울, 부산)' })
   @IsOptional()
   @IsString()
   region?: string;
+
+  @ApiPropertyOptional({ description: '시/군/구 필터 (예: 강남구, 해운대구)' })
+  @IsOptional()
+  @IsString()
+  district?: string;
 
   @ApiPropertyOptional({ enum: RiskLevel, description: '위험도 필터' })
   @IsOptional()
   @IsEnum(RiskLevel)
   riskLevel?: RiskLevel;
 
-  @ApiPropertyOptional({ enum: NewsCategory, description: '카테고리 필터' })
+  @ApiPropertyOptional({ enum: AccidentType, description: '사고 유형 필터' })
   @IsOptional()
-  @IsEnum(NewsCategory)
-  category?: NewsCategory;
+  @IsEnum(AccidentType)
+  accidentType?: AccidentType;
+
+  @ApiPropertyOptional({ description: '키워드 검색 (기사 제목 기준)' })
+  @IsOptional()
+  @IsString()
+  keyword?: string;
 }

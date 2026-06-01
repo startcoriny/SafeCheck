@@ -1,36 +1,40 @@
+// 뉴스 API 응답 DTO
 import { ApiProperty } from '@nestjs/swagger';
-import { RiskLevel, NewsCategory } from '../interfaces/news.types';
+import { RiskLevel, AccidentType } from '../interfaces/news.types';
 
 export class NewsResponseDto {
   @ApiProperty()
-  id: string;
+  id: number;
 
   @ApiProperty()
   title: string;
 
   @ApiProperty()
-  content: string;
-
-  @ApiProperty()
-  source: string;
-
-  @ApiProperty()
   url: string;
+
+  @ApiProperty()
+  publisher: string;
 
   @ApiProperty()
   publishedAt: Date;
 
+  @ApiProperty()
+  collectedAt: Date;
+
+  @ApiProperty({ enum: AccidentType })
+  accidentType: AccidentType;
+
   @ApiProperty({ enum: RiskLevel })
   riskLevel: RiskLevel;
 
-  @ApiProperty({ enum: NewsCategory })
-  category: NewsCategory;
-
   @ApiProperty()
-  region: string;
+  riskScore: number;
 
-  @ApiProperty()
-  createdAt: Date;
+  @ApiProperty({ nullable: true })
+  region: string | null;
+
+  @ApiProperty({ nullable: true })
+  district: string | null;
 }
 
 export class NewsListResponseDto {
