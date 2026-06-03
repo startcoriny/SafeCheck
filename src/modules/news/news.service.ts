@@ -65,7 +65,7 @@ export class NewsService {
     const news = await this.newsRepository.findById(id);
 
     if (!news) {
-      throw new NotFoundException(`News article not found. id=${id}`);
+      throw new NotFoundException(`뉴스를 찾을 수 없습니다. id=${id}`);
     }
 
     return this.toResponseDto(news);

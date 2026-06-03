@@ -262,7 +262,7 @@ export class NaverNewsCollector {
     const url = value?.trim();
 
     if (!url) {
-      throw new Error(`${name} is required for Naver news collection.`);
+      throw new Error(`${name} 환경변수가 설정되지 않았습니다.`);
     }
 
     return url;
@@ -280,7 +280,7 @@ export class NaverNewsCollector {
     });
 
     if (!response.ok) {
-      throw new Error(`Naver news request failed. status=${response.status}`);
+      throw new Error(`네이버 뉴스 요청 실패. status=${response.status}`);
     }
 
     return response.text();
