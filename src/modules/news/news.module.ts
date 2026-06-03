@@ -5,14 +5,21 @@ import { NewsController } from './news.controller';
 import { NewsService } from './news.service';
 import { NewsRepository } from './news.repository';
 import { NewsScheduler } from './news.scheduler';
+import { NaverNewsCollector } from './collector/naver-news.collector';
 import { NewsArticleEntity } from './entities/news.entity';
 import { NewsCollectLogEntity } from './entities/news-collect-log.entity';
 import { NewsCollectLockEntity } from './entities/news-collect-lock.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([NewsArticleEntity, NewsCollectLogEntity, NewsCollectLockEntity])],
+  imports: [
+    TypeOrmModule.forFeature([
+      NewsArticleEntity,
+      NewsCollectLogEntity,
+      NewsCollectLockEntity,
+    ]),
+  ],
   controllers: [NewsController],
-  providers: [NewsService, NewsRepository, NewsScheduler],
+  providers: [NewsService, NewsRepository, NewsScheduler, NaverNewsCollector],
   exports: [NewsService],
 })
 export class NewsModule {}

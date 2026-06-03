@@ -1,5 +1,10 @@
 // news_collect_logs 테이블 엔티티 — 뉴스 수집 실행 이력 저장
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
 import { Source, CollectStatus } from '../interfaces/news.types';
 
 @Entity('news_collect_logs')

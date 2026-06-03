@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
   app.setGlobalPrefix('api/v1');
 
@@ -17,7 +19,7 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: process.env.CORS_ORIGINS?.split(',') ?? ['http://localhost:3001'],
+    origin: configService.get<string[]>('app.corsOrigins') ?? [],
     credentials: true,
   });
 
@@ -30,9 +32,9 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, document);
 
-  const port = process.env.PORT ?? 3000;
+  const port = configService.get<number>('app.port') ?? 3000;
   await app.listen(port);
   console.log(`SafeCheck API is running on port ${port}`);
-  console.log(`Swagger docs: http://localhost:${port}/api/docs`);
+  console.log(`Swagger docs: /api/docs`);
 }
 bootstrap();

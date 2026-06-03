@@ -40,11 +40,11 @@ paths:
         - name: region
           in: query
           schema: { type: string }
-          description: 시/도 필터 (예: 서울, 부산)
+          description: '시/도 필터 (예: 서울, 부산)'
         - name: district
           in: query
           schema: { type: string }
-          description: 시/군/구 필터 (예: 강남구, 해운대구)
+          description: '시/군/구 필터 (예: 강남구, 해운대구)'
         - name: riskLevel
           in: query
           schema:
@@ -88,8 +88,8 @@ paths:
                       title: 강남역 인근 흉기난동…2명 사망
                       url: https://n.news.naver.com/article/003/0013976068
                       publisher: 뉴시스
-                      publishedAt: "2026-05-29T15:31:00+09:00"
-                      collectedAt: "2026-05-29T15:35:00+09:00"
+                      publishedAt: '2026-05-29T15:31:00+09:00'
+                      collectedAt: '2026-05-29T15:35:00+09:00'
                       accidentType: KNIFE_ATTACK
                       riskLevel: CRITICAL
                       riskScore: 15
@@ -98,7 +98,7 @@ paths:
                   total: 42
                   page: 1
                   limit: 20
-                timestamp: "2026-05-29T15:36:00+09:00"
+                timestamp: '2026-05-29T15:36:00+09:00'
 
   /news/{id}:
     get:

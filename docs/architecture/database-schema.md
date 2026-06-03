@@ -72,25 +72,25 @@
 
 ## 공통 정책
 
-| 항목 | 정책 |
-|------|------|
-| PK 타입 | UUID v4 (보안·분산 환경 대응) |
-| 타임스탬프 | UTC 기준 저장 (TIMESTAMPTZ) |
-| 소프트 삭제 | news, user 테이블 적용 (deleted_at). 나머지는 하드 삭제 |
-| 동기화 | 개발: `synchronize: true` / 운영: `synchronize: false` + migration |
+| 항목        | 정책                                                               |
+| ----------- | ------------------------------------------------------------------ |
+| PK 타입     | UUID v4 (보안·분산 환경 대응)                                      |
+| 타임스탬프  | UTC 기준 저장 (TIMESTAMPTZ)                                        |
+| 소프트 삭제 | news, user 테이블 적용 (deleted_at). 나머지는 하드 삭제            |
+| 동기화      | 개발: `synchronize: true` / 운영: `synchronize: false` + migration |
 
 ---
 
 ## 인덱스 전략
 
-| 테이블 | 컬럼 | 인덱스 유형 | 이유 |
-|--------|------|-----------|------|
-| news | published_at DESC | B-tree | 최신순 조회 기본 정렬 |
-| news | (region, risk_level) | 복합 B-tree | 지역+위험도 필터 |
-| news | url | UNIQUE | 중복 수집 방지 |
-| shelter | (lat, lng) | B-tree | 좌표 기반 검색 (PostGIS 도입 시 GIST) |
-| disaster_alert | (region, issued_at) | 복합 B-tree | 지역별 최신 알림 조회 |
-| user | email | UNIQUE | 로그인 조회 |
+| 테이블         | 컬럼                 | 인덱스 유형 | 이유                                  |
+| -------------- | -------------------- | ----------- | ------------------------------------- |
+| news           | published_at DESC    | B-tree      | 최신순 조회 기본 정렬                 |
+| news           | (region, risk_level) | 복합 B-tree | 지역+위험도 필터                      |
+| news           | url                  | UNIQUE      | 중복 수집 방지                        |
+| shelter        | (lat, lng)           | B-tree      | 좌표 기반 검색 (PostGIS 도입 시 GIST) |
+| disaster_alert | (region, issued_at)  | 복합 B-tree | 지역별 최신 알림 조회                 |
+| user           | email                | UNIQUE      | 로그인 조회                           |
 
 ---
 
