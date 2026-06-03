@@ -72,15 +72,21 @@ export class NewsService {
   }
 
   async collectAndSave(rawNews: RawNewsItem[]): Promise<void> {
-    const includeKeywords = this.readJsonFile<KeywordMap>('include-keywords.json');
-    const excludeKeywords = this.readJsonFile<string[]>('exclude-keywords.json');
-    const accidentTypeKeywords = this.readJsonFile<Record<AccidentType, string[]>>(
-      'accident-type-keywords.json',
+    const includeKeywords = this.readJsonFile<KeywordMap>(
+      'include-keywords.json',
     );
+    const excludeKeywords = this.readJsonFile<string[]>(
+      'exclude-keywords.json',
+    );
+    const accidentTypeKeywords = this.readJsonFile<
+      Record<AccidentType, string[]>
+    >('accident-type-keywords.json');
     const rules = this.readJsonFile<RiskScoreRules>('risk-score-rules.json');
 
     for (const rawItem of rawNews) {
-      const existingNews = await this.newsRepository.findByArticleKey(rawItem.articleKey);
+      const existingNews = await this.newsRepository.findByArticleKey(
+        rawItem.articleKey,
+      );
 
       if (existingNews) {
         continue;
@@ -122,16 +128,32 @@ export class NewsService {
     }
   }
 
+  assignRiskScoreByTitle(title: string): RiskScoreResult {
+    return this.assignRiskScore(title);
+  }
+
   private assignRiskScore(
     title: string,
-    includeKeywords: KeywordMap,
-    excludeKeywords: string[],
-    accidentTypeKeywords: Record<AccidentType, string[]>,
-    rules: RiskScoreRules,
+    includeKeywords = this.readJsonFile<KeywordMap>('include-keywords.json'),
+    excludeKeywords = this.readJsonFile<string[]>('exclude-keywords.json'),
+    accidentTypeKeywords = this.readJsonFile<Record<AccidentType, string[]>>(
+      'accident-type-keywords.json',
+    ),
+    rules = this.readJsonFile<RiskScoreRules>('risk-score-rules.json'),
   ): RiskScoreResult {
-    const matchedIncludeKeywords = this.findMatchedKeywords(title, Object.values(includeKeywords).flat());
-    const matchedExcludeKeywords = this.findMatchedKeywords(title, excludeKeywords);
-    const accidentType = this.resolveAccidentType(title, accidentTypeKeywords, rules.accidentTypeScores);
+    const matchedIncludeKeywords = this.findMatchedKeywords(
+      title,
+      Object.values(includeKeywords).flat(),
+    );
+    const matchedExcludeKeywords = this.findMatchedKeywords(
+      title,
+      excludeKeywords,
+    );
+    const accidentType = this.resolveAccidentType(
+      title,
+      accidentTypeKeywords,
+      rules.accidentTypeScores,
+    );
     const score =
       rules.accidentTypeScores[accidentType] +
       this.sumMatchedKeywordScores(title, rules.casualtyKeywordScores) +
@@ -187,8 +209,14 @@ export class NewsService {
     let selectedType = AccidentType.ETC;
     let selectedScore = accidentTypeScores[AccidentType.ETC] ?? 0;
 
-    for (const [type, keywords] of Object.entries(accidentTypeKeywords) as [AccidentType, string[]][]) {
-      if (type === AccidentType.ETC || this.findMatchedKeywords(title, keywords).length === 0) {
+    for (const [type, keywords] of Object.entries(accidentTypeKeywords) as [
+      AccidentType,
+      string[],
+    ][]) {
+      if (
+        type === AccidentType.ETC ||
+        this.findMatchedKeywords(title, keywords).length === 0
+      ) {
         continue;
       }
 
@@ -206,7 +234,12 @@ export class NewsService {
     score: number,
     thresholds: Record<RiskLevel, [number, number]>,
   ): RiskLevel {
-    for (const level of [RiskLevel.LOW, RiskLevel.MEDIUM, RiskLevel.HIGH, RiskLevel.CRITICAL]) {
+    for (const level of [
+      RiskLevel.LOW,
+      RiskLevel.MEDIUM,
+      RiskLevel.HIGH,
+      RiskLevel.CRITICAL,
+    ]) {
       const [min, max] = thresholds[level];
       if (score >= min && score <= max) {
         return level;
@@ -216,14 +249,21 @@ export class NewsService {
     return RiskLevel.CRITICAL;
   }
 
-  private sumMatchedKeywordScores(title: string, keywordScores: ScoreMap): number {
+  private sumMatchedKeywordScores(
+    title: string,
+    keywordScores: ScoreMap,
+  ): number {
     return Object.entries(keywordScores).reduce((sum, [keyword, score]) => {
       return this.includesKeyword(title, keyword) ? sum + score : sum;
     }, 0);
   }
 
   private findMatchedKeywords(title: string, keywords: string[]): string[] {
-    return [...new Set(keywords.filter((keyword) => this.includesKeyword(title, keyword)))];
+    return [
+      ...new Set(
+        keywords.filter((keyword) => this.includesKeyword(title, keyword)),
+      ),
+    ];
   }
 
   private includesKeyword(title: string, keyword: string): boolean {
@@ -232,6 +272,7 @@ export class NewsService {
 
   private readJsonFile<T>(fileName: string): T {
     const filePath = join(process.cwd(), 'keywords', fileName);
-    return JSON.parse(readFileSync(filePath, 'utf8')) as T;
+    const content = readFileSync(filePath, 'utf8').replace(/^\uFEFF/, '');
+    return JSON.parse(content) as T;
   }
 }

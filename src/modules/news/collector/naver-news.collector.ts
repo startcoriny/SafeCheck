@@ -22,17 +22,33 @@ interface ParsedArticle {
 @Injectable()
 export class NaverNewsCollector {
   private readonly logger = new Logger(NaverNewsCollector.name);
-  private readonly sectionUrl = 'https://news.naver.com/breakingnews/section/102/249';
-  private readonly moreUrl = 'https://news.naver.com/section/template/SECTION_ARTICLE_LIST_FOR_LATEST';
+  private readonly sectionUrl: string;
+  private readonly moreUrl: string;
+  private readonly articleBaseUrl: string;
   private readonly maxPageCount = 3;
   private readonly maxCollectCount = 100;
   private readonly requestIntervalMs = 500;
 
-  constructor(private readonly newsRepository: NewsRepository) {}
+  constructor(private readonly newsRepository: NewsRepository) {
+    this.sectionUrl = this.getRequiredUrl(
+      'BASE_NAVER_NEWS_URL',
+      process.env.BASE_NAVER_NEWS_URL,
+    );
+    this.moreUrl = this.getRequiredUrl(
+      'BASE_MORE_REQ_URL',
+      process.env.BASE_MORE_REQ_URL,
+    );
+    this.articleBaseUrl = this.getRequiredUrl(
+      'BASE_NAVER_ARTICLE_URL',
+      process.env.BASE_NAVER_ARTICLE_URL,
+    );
+  }
 
   async collect(): Promise<RawNewsItem[]> {
     const targetDate = this.getKstDate();
-    const initialHtml = await this.fetchHtml(`${this.sectionUrl}?date=${targetDate}`);
+    const initialHtml = await this.fetchHtml(
+      `${this.sectionUrl}?date=${targetDate}`,
+    );
     const collected: RawNewsItem[] = [];
 
     const initialCursor = this.extractInitialCursor(initialHtml);
@@ -55,7 +71,9 @@ export class NaverNewsCollector {
     ) {
       await this.delay(this.requestIntervalMs);
 
-      const html = await this.fetchHtml(this.buildMoreUrl(targetDate, cursor, pageNo));
+      const html = await this.fetchHtml(
+        this.buildMoreUrl(targetDate, cursor, pageNo),
+      );
       requestedPageCount += 1;
 
       shouldStop = await this.appendNewArticles(html, collected);
@@ -72,7 +90,10 @@ export class NaverNewsCollector {
     return collected;
   }
 
-  private async appendNewArticles(html: string, collected: RawNewsItem[]): Promise<boolean> {
+  private async appendNewArticles(
+    html: string,
+    collected: RawNewsItem[],
+  ): Promise<boolean> {
     const articles = this.parseArticles(html);
 
     for (const article of articles) {
@@ -80,7 +101,9 @@ export class NaverNewsCollector {
         return true;
       }
 
-      const existingNews = await this.newsRepository.findByArticleKey(article.articleKey);
+      const existingNews = await this.newsRepository.findByArticleKey(
+        article.articleKey,
+      );
       if (existingNews) {
         return true;
       }
@@ -100,7 +123,7 @@ export class NaverNewsCollector {
     while ((match = articleUrlPattern.exec(html)) !== null) {
       const pressCode = match[1];
       const articleId = match[2];
-      const url = `https://n.news.naver.com/article/${pressCode}/${articleId}`;
+      const url = `${this.articleBaseUrl}/${pressCode}/${articleId}`;
       const articleKey = `NAVER:${pressCode}:${articleId}`;
 
       if (articles.has(articleKey)) {
@@ -111,7 +134,9 @@ export class NaverNewsCollector {
       const title = this.extractTitle(block);
 
       if (!title) {
-        this.logger.warn(`네이버 기사 제목 파싱 실패. articleKey=${articleKey}`);
+        this.logger.warn(
+          `네이버 기사 제목 파싱 실패. articleKey=${articleKey}`,
+        );
         continue;
       }
 
@@ -132,7 +157,10 @@ export class NaverNewsCollector {
   private extractArticleBlock(html: string, articleUrlIndex: number): string {
     const start = Math.max(0, html.lastIndexOf('<li', articleUrlIndex));
     const nextStart = html.indexOf('<li', articleUrlIndex + 1);
-    const end = nextStart === -1 ? Math.min(html.length, articleUrlIndex + 5000) : nextStart;
+    const end =
+      nextStart === -1
+        ? Math.min(html.length, articleUrlIndex + 5000)
+        : nextStart;
 
     return html.slice(start, end);
   }
@@ -151,7 +179,9 @@ export class NaverNewsCollector {
       return this.decodeHtml(titleByAttribute[1]).trim();
     }
 
-    const linkedText = block.match(/<a[^>]+n\.news\.naver\.com\/article\/\d{3}\/\d{10}[^>]*>([\s\S]*?)<\/a>/i);
+    const linkedText = block.match(
+      /<a[^>]+n\.news\.naver\.com\/article\/\d{3}\/\d{10}[^>]*>([\s\S]*?)<\/a>/i,
+    );
     return linkedText?.[1] ? this.cleanText(linkedText[1]) : '';
   }
 
@@ -178,12 +208,16 @@ export class NaverNewsCollector {
   }
 
   private extractInitialCursor(html: string): string | null {
-    const cursor = html.match(/data-cursor-name=["']next["'][^>]*data-cursor=["']([^"']+)["']/i);
+    const cursor = html.match(
+      /data-cursor-name=["']next["'][^>]*data-cursor=["']([^"']+)["']/i,
+    );
     if (cursor?.[1]) {
       return cursor[1];
     }
 
-    const reversedCursor = html.match(/data-cursor=["']([^"']+)["'][^>]*data-cursor-name=["']next["']/i);
+    const reversedCursor = html.match(
+      /data-cursor=["']([^"']+)["'][^>]*data-cursor-name=["']next["']/i,
+    );
     return reversedCursor?.[1] ?? null;
   }
 
@@ -224,10 +258,21 @@ export class NaverNewsCollector {
     return url.toString();
   }
 
+  private getRequiredUrl(name: string, value: string | undefined): string {
+    const url = value?.trim();
+
+    if (!url) {
+      throw new Error(`${name} is required for Naver news collection.`);
+    }
+
+    return url;
+  }
+
   private async fetchHtml(url: string): Promise<string> {
     const response = await fetch(url, {
       headers: {
-        accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        accept:
+          'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'accept-language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
         'user-agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36',
