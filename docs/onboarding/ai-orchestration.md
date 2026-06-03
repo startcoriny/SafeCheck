@@ -14,18 +14,20 @@ AI 간 역할 중복을 줄이고, 각자의 강점을 활용하여 1인 개발 
 
 Claude는 설계, 검증, 문서화를 담당한다.
 
-| 작업 | 산출물 |
-|------|--------|
+| 작업          | 산출물                                       |
+| ------------- | -------------------------------------------- |
 | 요구사항 분석 | `docs/domain/{도메인}/feature-definition.md` |
-| DB 설계 | `docs/architecture/database-schema.md` |
-| API 설계 | `docs/api/openapi.yaml` |
-| 아키텍처 설계 | `docs/architecture/overview.md` |
-| ADR 작성 | `docs/decisions/*.md` |
-| 코드 리뷰 | PR 코멘트 |
-| Work Log 작성 | Notion |
-| PR 초안 작성 | GitHub PR |
+| DB 설계       | `docs/architecture/database-schema.md`       |
+| API 설계      | `docs/api/openapi.yaml`                      |
+| 아키텍처 설계 | `docs/architecture/overview.md`              |
+| ADR 작성      | `docs/decisions/*.md`                        |
+| 코드 리뷰     | PR 코멘트                                    |
+| Work Log 작성 | Notion                                       |
+| PR 초안 작성  | GitHub PR                                    |
 
 Claude는 구현보다 설계와 검증에 집중한다. 대규모 코드 생성은 하지 않는다.
+
+Claude 세부 규칙은 `CLAUDE.md`를 참조한다.
 
 ---
 
@@ -33,17 +35,19 @@ Claude는 구현보다 설계와 검증에 집중한다. 대규모 코드 생성
 
 Codex는 구현을 담당한다.
 
-| 작업 | 산출물 |
-|------|--------|
-| 기능 구현 | `src/modules/{도메인}/*.ts` |
-| DTO 작성 | `src/modules/{도메인}/dto/*.ts` |
-| Controller 작성 | `src/modules/{도메인}/{도메인}.controller.ts` |
-| Service 작성 | `src/modules/{도메인}/{도메인}.service.ts` |
-| Repository 작성 | `src/modules/{도메인}/{도메인}.repository.ts` |
-| 테스트 코드 작성 | `src/modules/{도메인}/__tests__/*.spec.ts` |
-| 리뷰 반영 | 기존 파일 수정 |
+| 작업             | 산출물                                        |
+| ---------------- | --------------------------------------------- |
+| 기능 구현        | `src/modules/{도메인}/*.ts`                   |
+| DTO 작성         | `src/modules/{도메인}/dto/*.ts`               |
+| Controller 작성  | `src/modules/{도메인}/{도메인}.controller.ts` |
+| Service 작성     | `src/modules/{도메인}/{도메인}.service.ts`    |
+| Repository 작성  | `src/modules/{도메인}/{도메인}.repository.ts` |
+| 테스트 코드 작성 | `src/modules/{도메인}/__tests__/*.spec.ts`    |
+| 리뷰 반영        | 기존 파일 수정                                |
 
 Codex는 Claude가 설계한 명세와 하네스 구조를 기준으로 구현한다.
+
+Codex 세부 규칙은 `AGENTS.md`를 참조한다.
 
 ---
 
@@ -127,13 +131,13 @@ src/modules/{도메인}/entities/{도메인}.entity.ts
 
 아래 기준으로 PR을 검토한다.
 
-| 항목 | 확인 내용 |
-|------|-----------|
-| 구조 | Feature-first 원칙 준수, 레이어 책임 분리 여부 |
-| 예외 처리 | 발생 가능한 예외만 처리하는지, 과도한 방어 코드 여부 |
-| 테스트 | 핵심 로직 단위 테스트 포함 여부 |
-| 성능 | N+1 쿼리, 불필요한 full scan 여부 |
-| 과설계 여부 | MVP 범위를 벗어난 구현 여부 |
+| 항목        | 확인 내용                                            |
+| ----------- | ---------------------------------------------------- |
+| 구조        | Feature-first 원칙 준수, 레이어 책임 분리 여부       |
+| 예외 처리   | 발생 가능한 예외만 처리하는지, 과도한 방어 코드 여부 |
+| 테스트      | 핵심 로직 단위 테스트 포함 여부                      |
+| 성능        | N+1 쿼리, 불필요한 full scan 여부                    |
+| 과설계 여부 | MVP 범위를 벗어난 구현 여부                          |
 
 ---
 

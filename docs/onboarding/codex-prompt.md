@@ -242,11 +242,11 @@ export interface RawNewsItem {
 
 테스트 대상 및 케이스:
 
-| 메서드 | 케이스 |
-|--------|--------|
-| `findAll` | 정상 조회, 빈 결과 반환 |
-| `findById` | 정상 조회, null 시 NotFoundException |
-| `collectAndSave` | 중복 기사 skip, 신규 기사 저장 |
+| 메서드            | 케이스                                   |
+| ----------------- | ---------------------------------------- |
+| `findAll`         | 정상 조회, 빈 결과 반환                  |
+| `findById`        | 정상 조회, null 시 NotFoundException     |
+| `collectAndSave`  | 중복 기사 skip, 신규 기사 저장           |
 | `assignRiskScore` | LOW / MEDIUM / HIGH / CRITICAL 각 케이스 |
 
 ---

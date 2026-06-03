@@ -12,7 +12,9 @@ export class NewsRepository {
     private readonly repo: Repository<NewsArticleEntity>,
   ) {}
 
-  async findAll(filter: NewsFilter): Promise<PaginatedResult<NewsArticleEntity>> {
+  async findAll(
+    filter: NewsFilter,
+  ): Promise<PaginatedResult<NewsArticleEntity>> {
     const page = filter.page;
     const limit = filter.limit;
     const offset = (page - 1) * limit;
@@ -26,11 +28,15 @@ export class NewsRepository {
     }
 
     if (filter.district) {
-      queryBuilder.andWhere('news.district = :district', { district: filter.district });
+      queryBuilder.andWhere('news.district = :district', {
+        district: filter.district,
+      });
     }
 
     if (filter.riskLevel) {
-      queryBuilder.andWhere('news.riskLevel = :riskLevel', { riskLevel: filter.riskLevel });
+      queryBuilder.andWhere('news.riskLevel = :riskLevel', {
+        riskLevel: filter.riskLevel,
+      });
     }
 
     if (filter.accidentType) {
@@ -40,7 +46,9 @@ export class NewsRepository {
     }
 
     if (filter.keyword) {
-      queryBuilder.andWhere('news.title ILIKE :keyword', { keyword: `%${filter.keyword}%` });
+      queryBuilder.andWhere('news.title ILIKE :keyword', {
+        keyword: `%${filter.keyword}%`,
+      });
     }
 
     const [items, total] = await queryBuilder
@@ -61,7 +69,9 @@ export class NewsRepository {
     return this.repo.findOne({ where: { id } });
   }
 
-  async findByArticleKey(articleKey: string): Promise<NewsArticleEntity | null> {
+  async findByArticleKey(
+    articleKey: string,
+  ): Promise<NewsArticleEntity | null> {
     return this.repo.findOne({ where: { articleKey } });
   }
 

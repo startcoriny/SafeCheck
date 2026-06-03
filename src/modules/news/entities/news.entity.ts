@@ -63,13 +63,28 @@ export class NewsArticleEntity {
   @Column({ name: 'is_filtered', default: false })
   isFiltered: boolean;
 
-  @Column({ name: 'filter_reason', type: 'varchar', length: 50, nullable: true })
+  @Column({
+    name: 'filter_reason',
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
   filterReason: FilterReason | null;
 
-  @Column({ name: 'accident_type', type: 'enum', enum: AccidentType, default: AccidentType.ETC })
+  @Column({
+    name: 'accident_type',
+    type: 'enum',
+    enum: AccidentType,
+    default: AccidentType.ETC,
+  })
   accidentType: AccidentType;
 
-  @Column({ name: 'risk_level', type: 'enum', enum: RiskLevel, default: RiskLevel.LOW })
+  @Column({
+    name: 'risk_level',
+    type: 'enum',
+    enum: RiskLevel,
+    default: RiskLevel.LOW,
+  })
   riskLevel: RiskLevel;
 
   @Column({ name: 'risk_score', default: 0 })

@@ -25,29 +25,29 @@ Common (filters, guards, interceptors, decorators, pipes)
 
 ## 허용된 의존 패턴
 
-| 의존 주체 | 의존 대상 | 이유 |
-|----------|----------|------|
-| news | shared/schedule | 뉴스 수집 크론 실행 인프라 |
-| shelter | shared/cache | 대피소 목록 캐싱 (좌표 검색 비용) |
-| disaster | shared/notification | 재난 경보 푸시·SMS 발송 |
-| disaster | shared/websocket | 실시간 재난 알림 브로드캐스트 |
-| disaster | shared/schedule | 재난 데이터 폴링 크론 |
-| rescue | modules/auth | 회원 구조 요청 시 사용자 식별 |
-| community | modules/auth | 게시글·채팅 인증 |
-| community | shared/websocket | 실시간 채팅방 |
-| 모든 Feature | shared/cache | 필요 시 캐싱 |
+| 의존 주체    | 의존 대상           | 이유                              |
+| ------------ | ------------------- | --------------------------------- |
+| news         | shared/schedule     | 뉴스 수집 크론 실행 인프라        |
+| shelter      | shared/cache        | 대피소 목록 캐싱 (좌표 검색 비용) |
+| disaster     | shared/notification | 재난 경보 푸시·SMS 발송           |
+| disaster     | shared/websocket    | 실시간 재난 알림 브로드캐스트     |
+| disaster     | shared/schedule     | 재난 데이터 폴링 크론             |
+| rescue       | modules/auth        | 회원 구조 요청 시 사용자 식별     |
+| community    | modules/auth        | 게시글·채팅 인증                  |
+| community    | shared/websocket    | 실시간 채팅방                     |
+| 모든 Feature | shared/cache        | 필요 시 캐싱                      |
 
 ---
 
 ## 금지된 의존 패턴
 
-| 금지 패턴 | 이유 |
-|----------|------|
-| `news → auth` | 뉴스 조회는 공개 API, 인증 불필요 |
-| `news → disaster` (직접 import) | Feature 모듈 간 직접 참조 금지 |
-| `shared/* → modules/*` | 공유 모듈은 Feature 모듈을 알면 안 됨 |
-| `common/* → modules/*` | 동일 이유 |
-| `shelter → disaster` (직접 import) | 도메인 간 결합 방지 |
+| 금지 패턴                          | 이유                                  |
+| ---------------------------------- | ------------------------------------- |
+| `news → auth`                      | 뉴스 조회는 공개 API, 인증 불필요     |
+| `news → disaster` (직접 import)    | Feature 모듈 간 직접 참조 금지        |
+| `shared/* → modules/*`             | 공유 모듈은 Feature 모듈을 알면 안 됨 |
+| `common/* → modules/*`             | 동일 이유                             |
+| `shelter → disaster` (직접 import) | 도메인 간 결합 방지                   |
 
 Feature 모듈 간 데이터가 필요할 경우 → **이벤트(EventEmitter2)** 또는 **공유 서비스**로 분리.
 
@@ -55,11 +55,11 @@ Feature 모듈 간 데이터가 필요할 경우 → **이벤트(EventEmitter2)*
 
 ## exports 규칙
 
-| 파일 종류 | exports 등록 여부 |
-|----------|-----------------|
-| Service | 외부에서 사용되는 경우에만 등록 |
-| Repository | 내부 전용 — exports 금지 |
-| Entity | 내부 전용 — exports 금지 |
+| 파일 종류       | exports 등록 여부                        |
+| --------------- | ---------------------------------------- |
+| Service         | 외부에서 사용되는 경우에만 등록          |
+| Repository      | 내부 전용 — exports 금지                 |
+| Entity          | 내부 전용 — exports 금지                 |
 | DTO / Interface | exports 불필요 (import 경로로 직접 참조) |
 
 ---
